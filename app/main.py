@@ -12,7 +12,9 @@ from app.routes.sync import router as sync_router
 from app.routes.health import router as health_router
 
 from app.utils.logger import logger
-
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 
 app = FastAPI(
     title="ShareMind AI",
@@ -59,7 +61,19 @@ app.include_router(
     tags=["Health"]
 )
 
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
 
+@app.get(
+    "/ui",
+    tags=["UI"],
+    summary="ShareMind AI Web Interface"
+)
+async def ui(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 # -----------------------------------------------------
 # Root Endpoint
 # -----------------------------------------------------
