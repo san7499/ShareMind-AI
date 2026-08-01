@@ -33,7 +33,6 @@ class AuthService:
         Raises:
             Exception: If authentication fails.
         """
-
         logger.info("Requesting Microsoft Graph access token...")
 
         result = self.app.acquire_token_for_client(
@@ -51,5 +50,9 @@ class AuthService:
         raise Exception(f"Authentication failed: {error}")
 
 
-# Singleton instance
-auth_service = AuthService()
+# Conditionally create the singleton instance based on configuration presence
+if all([TENANT_ID, CLIENT_ID, CLIENT_SECRET]):
+    auth_service = AuthService()
+else:
+    logger.warning("Microsoft Entra ID credentials are missing. AuthService is disabled.")
+    auth_service = None

@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 from app.services.embeddings import embedding_service
 from app.services.vectordb import vector_db
 from app.services.llm import llm_service, LLMService
-from app.services.citation import citation_service, CitationService
+from app.services.citations import citation_service, CitationService
 from app.utils.logger import logger
 
 

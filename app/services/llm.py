@@ -6,7 +6,7 @@ try:
 except ImportError:
     ollama = None
 
-from app.config import OLLAMA_MODEL, OLLAMA_BASE_URL
+from app.config import OLLAMA_MODEL, OLLAMA_URL
 from app.utils.logger import logger
 
 
@@ -18,7 +18,7 @@ class LLMService:
     def __init__(
         self, 
         model_name: str = OLLAMA_MODEL, 
-        base_url: Optional[str] = OLLAMA_BASE_URL
+        base_url: Optional[str] = OLLAMA_URL
     ):
         if ollama is None:
             raise ImportError(

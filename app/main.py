@@ -1,3 +1,9 @@
+"""
+main.py
+
+Entry point for the ShareMind AI application.
+"""
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
@@ -5,29 +11,79 @@ from app.routes.chat import router as chat_router
 from app.routes.sync import router as sync_router
 from app.routes.health import router as health_router
 
+from app.utils.logger import logger
+
+
 app = FastAPI(
     title="ShareMind AI",
     description="Enterprise SharePoint Permission-Aware RAG Chatbot",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
-# Register Routes
-app.include_router(chat_router)
-app.include_router(sync_router)
-app.include_router(health_router)
+
+# -----------------------------------------------------
+# Startup Event
+# -----------------------------------------------------
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Starting ShareMind AI...")
+    logger.info("Application started successfully.")
 
 
-@app.get("/")
-def home():
+# -----------------------------------------------------
+# Shutdown Event
+# -----------------------------------------------------
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Shutting down ShareMind AI...")
+
+
+# -----------------------------------------------------
+# Register API Routes
+# -----------------------------------------------------
+app.include_router(
+    chat_router,
+    tags=["Chat"]
+)
+
+app.include_router(
+    sync_router,
+    tags=["SharePoint"]
+)
+
+app.include_router(
+    health_router,
+    tags=["Health"]
+)
+
+
+# -----------------------------------------------------
+# Root Endpoint
+# -----------------------------------------------------
+@app.get("/", tags=["Home"])
+async def home():
+    """
+    Root endpoint.
+    """
+
     return JSONResponse(
-        {
+        status_code=200,
+        content={
             "project": "ShareMind AI",
+            "description": "Enterprise Open WebUI Chatbot with SharePoint Permission-Aware RAG",
+            "version": "1.0.0",
             "status": "Running",
-            "version": "1.0.0"
+            "documentation": "/docs"
         }
     )
 
 
+# -----------------------------------------------------
+# Run Application
+# -----------------------------------------------------
 if __name__ == "__main__":
     import uvicorn
 
